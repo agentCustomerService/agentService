@@ -43,6 +43,10 @@ class StateManager:
     def get_memory_context(self, session_id: str) -> str:
         """Get memory context from past interactions."""
         return get_session_memory_context(session_id)
+    
+    def get_session(self, session_id: str) -> Optional[dict]:
+        """Get session data by ID."""
+        return get_session(session_id)
 
 
 # Global state manager instance

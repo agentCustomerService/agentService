@@ -1,21 +1,32 @@
 from typing import TypedDict, List
-from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
-from langchain_ollama import ChatOllama
+import os
 
 from models import ActionResponse
 from services.orders import cancel_order, refund_order
 from state_manager import state_manager
 from rag_policies import get_policies_context, list_loaded_policies
 
+load_dotenv()
 
 # ----------------------------
-# LOCAL LLM (FIXED MODEL NAME)
+# LLM SETUP
 # ----------------------------
-llm = ChatOllama(
-    model="llama3.1:8b",  # IMPORTANT FIX
-    temperature=0
-)
+try:
+    from langchain_ollama import ChatOllama
+    llm = ChatOllama(
+        model="llama3.1:8b",
+        temperature=0
+    )
+except ImportError:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    if not os.getenv("GOOGLE_API_KEY"):
+        raise ValueError("GOOGLE_API_KEY is required when langchain-ollama is not available")
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0
+    )
 
 SYSTEM_PROMPT = """
 You are an order management assistant with access to company policies.
@@ -51,7 +62,9 @@ class AgentState(TypedDict):
     message: str
     order_id: str
     actions: List[str]
+    pending_actions: List[str]  # Actions to show user for confirmation
     executed_actions: List[str]
+    user_confirmed: bool  # User confirmation flag
     logs: List[str]
     response: str
     policies_shown: bool
@@ -121,8 +134,34 @@ Return the JSON with action decision and whether to show policies.
 
     return {
         "actions": actions,
+        "pending_actions": actions,  # Show actions for user confirmation
+        "user_confirmed": False,  # Require user confirmation
         "policies_shown": show_policies,
         "response": message
+    }
+
+
+# ----------------------------
+# DISPLAY ACTIONS NODE
+# ----------------------------
+async def display_actions(state: AgentState):
+    """Display pending actions for user confirmation"""
+    
+    pending_actions = state.get("pending_actions", [])
+    
+    if not pending_actions:
+        return {
+            "user_confirmed": True  # No actions to confirm
+        }
+    
+    # Log the actions for user review
+    action_list = ", ".join(pending_actions)
+    logs = state.get("logs", [])
+    logs.append(f"Pending actions to execute: {action_list}")
+    
+    return {
+        "logs": logs,
+        "pending_actions": pending_actions
     }
 
 
@@ -132,6 +171,14 @@ Return the JSON with action decision and whether to show policies.
 async def execute(state: AgentState):
 
     actions = state.get("actions", [])
+    pending = state.get("pending_actions", [])
+    
+    # Only execute if user confirmed or no pending actions
+    if not pending or not state.get("user_confirmed", False):
+        return {
+            "actions": actions,
+            "pending_actions": pending
+        }
 
     if not actions:
         return {}
@@ -191,11 +238,24 @@ async def generate_response(state: AgentState):
 
 
 # ----------------------------
-# ROUTER
+# ROUTER - Should Display Actions
+# ----------------------------
+def should_display_actions(state: AgentState):
+    """Check if there are actions to display"""
+    
+    if state.get("pending_actions"):
+        return "display_actions"
+    
+    return "generate_response"
+
+
+# ----------------------------
+# ROUTER - Should Continue Execution
 # ----------------------------
 def should_continue(state: AgentState):
-
-    if state.get("actions"):
+    """Check if we should continue executing actions"""
+    
+    if state.get("actions") and state.get("user_confirmed", False):
         return "execute"
 
     return "generate_response"
@@ -207,12 +267,13 @@ def should_continue(state: AgentState):
 graph = StateGraph(AgentState)
 
 graph.add_node("analyze", analyze)
+graph.add_node("display_actions", display_actions)
 graph.add_node("execute", execute)
 graph.add_node("generate_response", generate_response)
 
 graph.add_edge(START, "analyze")
-graph.add_edge("analyze", "execute")
-
+graph.add_conditional_edges("analyze", should_display_actions)
+graph.add_edge("display_actions", "execute")
 graph.add_conditional_edges("execute", should_continue)
 
 graph.add_edge("generate_response", END)

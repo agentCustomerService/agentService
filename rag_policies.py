@@ -11,10 +11,10 @@ from datetime import datetime
 
 try:
     from PyPDF2 import PdfReader
-    from langchain_community.embeddings import OllamaEmbeddings
+    from langchain_ollama import OllamaEmbeddings
     from langchain_community.vectorstores import FAISS
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-    from langchain.schema import Document
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from langchain_core.documents import Document
 except ImportError as e:
     print(f"Warning: Some dependencies not installed: {e}")
 
@@ -173,7 +173,12 @@ def load_vectorstore(policy_name: str):
             print("[RAG] Cannot load vector store without embeddings")
             return None
         
-        vectorstore = FAISS.load_local(str(vectorstore_path), embeddings)
+        vectorstore = vectorstore = FAISS.load_local(
+                                    str(vectorstore_path),
+                                    embeddings,
+                                    allow_dangerous_deserialization=True
+                                    )
+
         return vectorstore
         
     except Exception as e:

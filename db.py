@@ -72,7 +72,7 @@ def create_session(session_id: str, metadata: dict = None) -> bool:
 
 
 def get_session(session_id: str) -> dict:
-    """Get session info."""
+    """Get session info including latest state."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
@@ -82,16 +82,35 @@ def get_session(session_id: str) -> dict:
     """, (session_id,))
     
     row = cursor.fetchone()
-    conn.close()
     
-    if row:
-        return {
-            "session_id": row[0],
-            "created_at": row[1],
-            "updated_at": row[2],
-            "metadata": json.loads(row[3])
-        }
-    return None
+    if not row:
+        conn.close()
+        return None
+    
+    session_data = {
+        "session_id": row[0],
+        "created_at": row[1],
+        "updated_at": row[2],
+        "metadata": json.loads(row[3])
+    }
+    
+    # Get latest state from state_history
+    cursor.execute("""
+        SELECT state FROM state_history
+        WHERE session_id = ?
+        ORDER BY timestamp DESC
+        LIMIT 1
+    """, (session_id,))
+    
+    state_row = cursor.fetchone()
+    if state_row:
+        latest_state = json.loads(state_row[0])
+        session_data["pending_actions"] = latest_state.get("pending_actions", [])
+        session_data["executed_actions"] = latest_state.get("executed_actions", [])
+        session_data["logs"] = latest_state.get("logs", [])
+    
+    conn.close()
+    return session_data
 
 
 def save_state_snapshot(session_id: str, state: dict) -> None:

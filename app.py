@@ -5,6 +5,7 @@ from agent import app as agent_app
 from models import (
     ChatRequest,
     ChatResponse,
+    ConfirmActionsRequest,
     SessionInfo,
     InteractionRecord
 )
@@ -45,7 +46,9 @@ async def chat(request: ChatRequest):
         "message": request.message,
         "order_id": request.order_id,
         "actions": [],
+        "pending_actions": [],
         "executed_actions": [],
+        "user_confirmed": False,
         "logs": [],
         "response": ""
 
@@ -57,11 +60,15 @@ async def chat(request: ChatRequest):
         "order_id": request.order_id
     }, result)
 
+    pending_actions = result.get("pending_actions", [])
+    awaiting_confirmation = bool(pending_actions)
+
     return {
 
         "success": True,
         "session_id": session_id,
-        "actions": result.get(
+        "pending_actions": pending_actions,
+        "executed_actions": result.get(
             "executed_actions",
             []
         ),
@@ -74,8 +81,73 @@ async def chat(request: ChatRequest):
         "response": result.get(
             "response",
             ""
-        )
+        ),
+        
+        "awaiting_confirmation": awaiting_confirmation
     }
+
+
+@api.post("/actions/confirm")
+async def confirm_actions(request: ConfirmActionsRequest):
+    """
+    User confirms or cancels pending actions.
+    
+    request.confirmed = True: Execute the pending actions
+    request.confirmed = False: Cancel and discard the pending actions
+    """
+    
+    session_id = request.session_id
+    order_id = request.order_id
+    
+    # Get current state from session
+    session_data = state_manager.get_session(session_id)
+    
+    if not session_data:
+        return {
+            "success": False,
+            "error": "Session not found"
+        }
+    
+    # If user confirmed, execute the actions
+    if request.confirmed:
+        result = await agent_app.ainvoke({
+            "session_id": session_id,
+            "message": "",
+            "order_id": order_id,
+            "actions": session_data.get("pending_actions", []),
+            "pending_actions": [],
+            "executed_actions": session_data.get("executed_actions", []),
+            "user_confirmed": True,  # User confirmed - proceed with execution
+            "logs": session_data.get("logs", []),
+            "response": ""
+        })
+        
+        executed_actions = result.get("executed_actions", [])
+        logs = result.get("logs", [])
+        response = result.get("response", "")
+        
+        return {
+            "success": True,
+            "session_id": session_id,
+            "message": "Actions executed successfully",
+            "executed_actions": executed_actions,
+            "logs": logs,
+            "response": response
+        }
+    
+    else:
+        # User cancelled - discard pending actions
+        logs = session_data.get("logs", [])
+        logs.append("User cancelled pending actions")
+        
+        return {
+            "success": True,
+            "session_id": session_id,
+            "message": "Pending actions cancelled and discarded",
+            "executed_actions": [],
+            "logs": logs,
+            "response": "No actions were performed. Pending actions were cancelled."
+        }
 
 
 @api.get("/sessions", response_model=list)

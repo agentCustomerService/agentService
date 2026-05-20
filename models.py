@@ -8,12 +8,20 @@ class ChatRequest(BaseModel):
     session_id: Optional[str] = None
 
 
+class ConfirmActionsRequest(BaseModel):
+    session_id: str
+    order_id: str
+    confirmed: bool  # User confirmation: True to proceed, False to cancel
+
+
 class ChatResponse(BaseModel):
     success: bool
     session_id: str
-    actions: List[str]
+    pending_actions: List[str]  # Actions waiting for confirmation
+    executed_actions: List[str]
     logs: List[str]
     response: str
+    awaiting_confirmation: bool  # Whether waiting for user to confirm actions
 
 
 class ActionResponse(BaseModel):

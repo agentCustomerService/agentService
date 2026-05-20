@@ -1,0 +1,167 @@
+{
+  "created_at": "2026-05-20T04:15:48.575720",
+  "policies": [
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T04:51:31.287370",
+      "chunks_count": 33,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T08:53:27.361643",
+      "chunks_count": 33,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T08:54:52.364020",
+      "chunks_count": 33,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:01:30.876196",
+      "chunks_count": 33,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:03:14.839768",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:12:07.348882",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:28:01.256244",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:29:29.118879",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:44:40.753984",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:51:30.389193",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:56:28.975416",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T09:57:54.456240",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:01:02.862677",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:06:57.456371",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:35:59.078195",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:42:16.884001",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:47:43.007826",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:53:05.922877",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:54:44.599257",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T10:56:21.631748",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T11:00:49.299269",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T11:02:22.491777",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    },
+    {
+      "name": "default_policy",
+      "pdf_path": "C:\\Users\\DELL\\Desktop\\Policy.pdf",
+      "loaded_at": "2026-05-20T11:03:56.919576",
+      "chunks_count": 36,
+      "vectorstore_path": "C:\\Users\\DELL\\Desktop\\agent\\policies\\vectordb\\default_policy_store"
+    }
+  ],
+  "last_updated": "2026-05-20T11:03:56.919636"
+}
