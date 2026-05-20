@@ -51,3 +51,6 @@ langgraph
 langchain
 langchain-google-genai
 requests
+PyPDF2
+faiss-cpu
+langchain-community

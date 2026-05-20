@@ -1,6 +1,6 @@
 import httpx
 
-BASE_URL = "http://localhost:9000"
+BASE_URL = "https://localhost:44389/"
 
 
 async def cancel_order(order_id: str):

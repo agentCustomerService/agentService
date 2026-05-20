@@ -6,6 +6,7 @@ from langchain_ollama import ChatOllama
 from models import ActionResponse
 from services.orders import cancel_order, refund_order
 from state_manager import state_manager
+from rag_policies import get_policies_context, list_loaded_policies
 
 
 # ----------------------------
@@ -17,22 +18,31 @@ llm = ChatOllama(
 )
 
 SYSTEM_PROMPT = """
-You are an order management assistant.
+You are an order management assistant with access to company policies.
 
 Available actions:
 - cancel
 - refund
 - none
 
+IMPORTANT: Before suggesting cancel or refund actions, you MUST:
+1. First inform the customer of relevant policies
+2. Ask for their consent given the policies
+3. Only proceed with the action if they agree
+
 Return ONLY valid JSON in this format:
 
 {
-  "actions": ["cancel", "refund"]
+  "actions": ["cancel", "refund"],
+  "show_policies": true,
+  "message": "Here are our policies... do you agree?"
 }
 
 Rules:
 - output JSON only
 - no explanation
+- Always show policies before actions
+- Be respectful about policies
 """
 
 
@@ -44,11 +54,29 @@ class AgentState(TypedDict):
     executed_actions: List[str]
     logs: List[str]
     response: str
+    policies_shown: bool
 
 
 # ----------------------------
-# ANALYZE (FIXED: NO structured_output)
-# Ollama structured output is unreliable here
+# POLICY RETRIEVAL
+# ----------------------------
+def retrieve_policies(state: AgentState) -> str:
+    """Retrieve relevant policies for the order action."""
+    message = state.get("message", "").lower()
+    
+    # Determine what kind of policies to show
+    if "refund" in message and "cancel" in message:
+        return get_policies_context("both")
+    elif "refund" in message:
+        return get_policies_context("refund")
+    elif "cancel" in message:
+        return get_policies_context("cancellation")
+    
+    return ""
+
+
+# ----------------------------
+# ANALYZE (WITH POLICY CONTEXT)
 # ----------------------------
 async def analyze(state: AgentState):
 
@@ -56,14 +84,22 @@ async def analyze(state: AgentState):
     memory_context = state_manager.get_memory_context(state.get("session_id", ""))
     
     memory_section = f"\n{memory_context}\n" if memory_context else ""
+    
+    # Get relevant policies
+    policies = retrieve_policies(state)
+    policies_section = f"\n{policies}\n" if policies else ""
 
     prompt = f"""
 {SYSTEM_PROMPT}
 
 {memory_section}
 
+{policies_section}
+
 User message:
 {state["message"]}
+
+Return the JSON with action decision and whether to show policies.
 """
 
     result = llm.invoke(prompt)
@@ -76,11 +112,17 @@ User message:
     try:
         data = json.loads(content)
         actions = data.get("actions", [])
+        show_policies = data.get("show_policies", False)
+        message = data.get("message", "")
     except Exception:
         actions = []
+        show_policies = False
+        message = ""
 
     return {
-        "actions": actions
+        "actions": actions,
+        "policies_shown": show_policies,
+        "response": message
     }
 
 
@@ -131,11 +173,17 @@ async def execute(state: AgentState):
 async def generate_response(state: AgentState):
 
     executed = state.get("executed_actions", [])
+    response = state.get("response", "")
 
     if not executed:
-        response = "No actions were performed."
+        if not response:
+            response = "No actions were performed."
     else:
-        response = "Completed actions: " + ", ".join(executed)
+        action_text = ", ".join(executed)
+        if response:
+            response = f"{response}\n\nCompleted actions: {action_text}"
+        else:
+            response = f"Completed actions: {action_text}"
 
     return {
         "response": response
